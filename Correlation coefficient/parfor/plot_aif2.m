@@ -1,0 +1,20 @@
+%clear;clc;
+load iaf2.mat
+%dd=preprocess(iaf2);
+xplot=1:size(iaf2,1);
+figure
+plot(xplot,iaf2(:,5),'-r')
+figure
+plot(xplot,DD(:,5),'-b')
+%figure
+%plot(xplot,iaf2(:,2),'-b')
+%plot(xplot,dd(:,2),'-b')
+%figure
+%plot(xplot,iaf2(:,3),'-y')
+%plot(xplot,dd(:,3),'-y')
+%figure
+%plot(xplot,iaf2(:,4),'-g')
+%plot(xplot,dd(:,4),'-g')
+%figure
+%plot(xplot,iaf2(:,1),'-k')
+%plot(xplot,dd(:,5),'-k')

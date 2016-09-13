@@ -1,0 +1,9 @@
+N=100;
+f=zeros(50,50);
+f(15:35,23:28)=1;
+subplot(121),imshow(f),title('空间域图像');
+F=fft2(f,N,N);
+F2=fftshift(abs(F));
+subplot(122);
+x=1:N;y=1:N;
+mesh(x,y,F2(x,y));colorbar,title('傅里叶变换幅值');

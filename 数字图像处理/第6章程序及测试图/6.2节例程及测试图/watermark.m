@@ -1,0 +1,126 @@
+function watermark
+clear all;
+clc;
+%保存开始时间
+start_time=cputime;
+figure(1);
+%读出原始图像
+subplot(1,3,1);
+input=imread('hua61.jpg');
+imshow(input);
+title('原始图像');
+%读出水印
+subplot(1,3,2);
+water=imread('A.jpg');
+imshow(water,[]);
+title('水印');
+%三色分离
+input=double(input);
+water=double(water);
+inputr=input(:,:,1);
+waterr=water(:,:,1);
+inputg=input(:,:,2);
+waterg=water(:,:,2);
+inputb=double(input(:,:,3));
+waterb=double(water(:,:,3));
+%系数r大.增加鲁棒性,r小增加透明性
+r=0.06;
+%水印R的分解
+[Cwr,Swr]=WAVEDEC2(waterr,1,'haar');
+%图像R的分解
+[Cr,Sr]=WAVEDEC2(inputr,2,'haar');
+%水印的嵌入
+Cr(1:size(Cwr,2)/16)=...
+    Cr(1:size(Cwr,2)/16)+r*Cwr(1:size(Cwr,2)/16);
+k=0;
+while k<=size(Cr,2)/size(Cwr,2)-1
+    Cr(1+size(Cr,2)/4+k*size(Cwr,2)/4:size(Cr,2)/4+...
+        (k+1)*size(Cwr,2)/4)=Cr(1+size(Cr,2)/4+...
+        k*size(Cwr,2)/4:size(Cr,2)/4+(k+1)*size(Cwr,2)/4+...
+        r*Cwr(1+size(Cwr,2)/4:size(Cwr,2)/2));
+    Cr(1+size(Cr,2)/2+k*size(Cwr,2)/4:size(Cr,2)/2+...
+        (k+1)*size(Cwr,2)/4)=Cr(1+size(Cr,2)/2+...
+        k*size(Cwr,2)/4:size(Cr,2)/2+(k+1)*size(Cwr,2)/4+...
+        r*Cwr(1+size(Cwr,2)/2:3*size(Cwr,2)/4));
+    Cr(1+3*size(Cr,2)/4+k*size(Cwr,2)/4:3*size(Cr,2)/4+...
+        (k+1)*size(Cwr,2)/4)=Cr(1+3*size(Cr,2)/4+...
+        k*size(Cwr,2)/4:3*size(Cr,2)/4+(k+1)*size(Cwr,2)/4+...
+        r*Cwr(1+3*size(Cwr,2)/4:size(Cwr,2)));
+    k=k+1;
+end;
+Cr(1:size(Cwr,2)/4)=Cr(1:size(Cwr,2)/4)+r*Cwr(1:size(Cwr,2)/4);
+g=0.03;
+%水印G的分解
+[Cwg,Swg]=WAVEDEC2(waterg,1,'haar');
+%图像G的分解
+[Cg,Sg]=WAVEDEC2(inputg,2,'haar');
+%水印的嵌入
+Cg(1:size(Cwg,2)/16)=...
+    Cg(1:size(Cwg,2)/16)+g*Cwg(1:size(Cwg,2)/16);
+k=0;
+while k<=size(Cg,2)/size(Cwg,2)-1
+    Cg(1+size(Cg,2)/4+k*size(Cwg,2)/4:size(Cg,2)/4+...
+        (k+1)*size(Cwg,2)/4)=Cg(1+size(Cg,2)/4+...
+        k*size(Cwg,2)/4:size(Cg,2)/4+(k+1)*size(Cwg,2)/4+...
+        g*Cwg(1+size(Cwg,2)/4:size(Cwg,2)/2));
+    Cg(1+size(Cg,2)/2+k*size(Cwg,2)/4:size(Cg,2)/2+...
+        (k+1)*size(Cwg,2)/4)=Cg(1+size(Cg,2)/2+...
+        k*size(Cwg,2)/4:size(Cg,2)/2+(k+1)*size(Cwg,2)/4+...
+        g*Cwg(1+size(Cwg,2)/2:3*size(Cwg,2)/4));
+    Cg(1+3*size(Cg,2)/4+k*size(Cwg,2)/4:3*size(Cg,2)/4+...
+        (k+1)*size(Cwg,2)/4)=Cg(1+3*size(Cg,2)/4+...
+        k*size(Cwg,2)/4:3*size(Cg,2)/4+(k+1)*size(Cwg,2)/4+...
+        g*Cwg(1+3*size(Cwg,2)/4:size(Cwg,2)));
+    k=k+1;
+end;
+Cg(1:size(Cwg,2)/4)=Cg(1:size(Cwg,2)/4)+g*Cwg(1:size(Cwg,2)/4);
+b=0.12;
+%水印B的分解
+[Cwb,Swb]=WAVEDEC2(waterb,1,'haar');
+%图像B的分解
+[Cb,Sb]=WAVEDEC2(inputb,2,'haar');
+%水印的嵌入
+Cb(1:size(Cwb,2)/16)=...
+    Cb(1:size(Cwb,2)/16)+b*Cwb(1:size(Cwb,2)/16);
+k=0;
+while k<=size(Cb,2)/size(Cwb,2)-1
+    Cb(1+size(Cb,2)/4+k*size(Cwb,2)/4:size(Cb,2)/4+...
+        (k+1)*size(Cwb,2)/4)=Cb(1+size(Cb,2)/4+...
+        k*size(Cwb,2)/4:size(Cb,2)/4+(k+1)*size(Cwb,2)/4+...
+        b*Cwb(1+size(Cwb,2)/4:size(Cwb,2)/2));
+    Cb(1+size(Cb,2)/2+k*size(Cwb,2)/4:size(Cb,2)/2+...
+        (k+1)*size(Cwb,2)/4)=Cb(1+size(Cb,2)/2+...
+        k*size(Cwb,2)/4:size(Cb,2)/2+(k+1)*size(Cwb,2)/4+...
+        b*Cwb(1+size(Cwb,2)/2:3*size(Cwb,2)/4));
+    Cb(1+3*size(Cb,2)/4+k*size(Cwb,2)/4:3*size(Cb,2)/4+...
+        (k+1)*size(Cwb,2)/4)=Cb(1+3*size(Cb,2)/4+...
+        k*size(Cwb,2)/4:3*size(Cb,2)/4+(k+1)*size(Cwb,2)/4+...
+        b*Cwb(1+3*size(Cwb,2)/4:size(Cwb,2)));
+    k=k+1;
+end;
+Cb(1:size(Cwb,2)/4)=Cb(1:size(Cwb,2)/4)+b*Cwb(1:size(Cwb,2)/4);
+%图像的重构
+inputr=WAVEREC2(Cr,Sr,'haar');
+inputg=WAVEREC2(Cg,Sg,'haar');
+inputb=WAVEREC2(Cb,Sb,'haar');
+%三色的叠加
+temp=size(inputr);
+pic=zeros(temp(1),temp(2),3);
+for i=1:temp(1);
+    for j=1:temp(2);
+        pic(i,j,1)=inputr(i,j);
+        pic(i,j,2)=inputg(i,j);
+        pic(i,j,3)=inputb(i,j);
+    end;
+end;
+output=uint8(round(pic));
+%转化为unit8
+watermarked_image_uint8=uint8(output);
+imwrite(watermarked_image_uint8,'watermarked1.bmp','bmp');
+%显示时间
+elapsed_time=cputime-start_time,
+%输出结果
+subplot(1,3,3);
+imshow(watermarked_image_uint8);
+title('水印图像');
+
